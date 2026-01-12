@@ -411,7 +411,7 @@ with tab1:
 
     st.markdown("<br>", unsafe_allow_html=True)
 
-    # Generate Button
+     # Generate Button
     if st.button("🚀 GENERATE OPTIMAL ALLOCATION", type="primary", key="gen_btn"):
         with st.spinner("🧠 AI Processing..."):
             progress = st.progress(0)
@@ -551,11 +551,11 @@ with tab1:
 
         st.dataframe(df_allocation, use_container_width=True, height=250)
 
-# TAB 2: Backtest
+# TAB 2: Backtes# TAB 2: Backtest
 with tab2:
     st.markdown("## 📈 HISTORICAL PERFORMANCE ANALYSIS")
 
-  if st.button("🔄 RUN BACKTEST", key="backtest_btn"):
+    if st.button("🔄 RUN BACKTEST", key="backtest_btn"):
         if st.session_state.models_loaded and st.session_state.ml_system:
             with st.spinner("⏳ Running simulation..."):
                 try:
@@ -606,6 +606,33 @@ with tab2:
             st.metric("Win Rate", f"{metrics['Win Rate (%)']:.1f}%", "✅")
 
         st.markdown("<br>", unsafe_allow_html=True)
+
+        # Performance chart
+        results_df = st.session_state.backtest_results['df']
+
+        fig_perf = go.Figure()
+        fig_perf.add_trace(go.Scatter(
+            x=results_df.index,
+            y=results_df['portfolio_value'],
+            mode='lines',
+            name='Portfolio Value',
+            line=dict(color='#00f7ff', width=3),
+            fill='tozeroy',
+            fillcolor='rgba(0, 247, 255, 0.1)'
+        ))
+
+        fig_perf.update_layout(
+            title={'text': 'PORTFOLIO PERFORMANCE', 'font': {'color': '#00f7ff', 'size': 24}},
+            paper_bgcolor='rgba(0,0,0,0)',
+            plot_bgcolor='rgba(0,0,0,0.2)',
+            font=dict(color='#00f7ff'),
+            xaxis=dict(gridcolor='rgba(0, 247, 255, 0.1)', title_text='Date', title_font=dict(color='#00f7ff')),
+            yaxis=dict(gridcolor='rgba(0, 247, 255, 0.1)', title_text='Value (₹)', title_font=dict(color='#00f7ff')),
+            hovermode='x unified',
+            height=500
+        )
+
+        st.plotly_chart(fig_perf, use_container_width=True)
 
         # Performance chart
         results_df = st.session_state.backtest_results['df']
@@ -705,6 +732,7 @@ st.markdown("""
 </div>
 
 """, unsafe_allow_html=True)
+
 
 
 
