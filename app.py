@@ -300,6 +300,7 @@ with st.sidebar:
     • <b>Real-time</b> - Analysis
     </div>
     """, unsafe_allow_html=True)
+
 # Main Tabs
 tab1, tab2, tab3 = st.tabs(["🎯 ALLOCATION ENGINE", "📈 BACKTEST", "🧠 AI INSIGHTS"])
 
@@ -389,7 +390,7 @@ with tab1:
             height=300
         )
 
-        st.plotly_chart(fig_gauge, use_container_width=True)
+        st.plotly_chart(fig_gauge, use_container_width=True, key="gauge_chart")
 
         # Profile stats
         profile_data = {
@@ -411,7 +412,7 @@ with tab1:
 
     st.markdown("<br>", unsafe_allow_html=True)
 
-     # Generate Button
+    # Generate Button
     if st.button("🚀 GENERATE OPTIMAL ALLOCATION", type="primary", key="gen_btn"):
         with st.spinner("🧠 AI Processing..."):
             progress = st.progress(0)
@@ -431,8 +432,7 @@ with tab1:
                 time.sleep(0.3)
                 progress.progress((i + 1) / len(steps))
 
-          # Generate allocation
-# Generate allocation
+            # Generate allocation
             if st.session_state.models_loaded and st.session_state.ml_system:
                 try:
                     # Ensure processed_data exists
@@ -446,7 +446,7 @@ with tab1:
                         time_horizon=time_horizon,
                         knowledge_level=knowledge_level
                     )
-                    st.session_state.allocation_result = result  # FIXED: Was incorrectly assigning to generate_allocation
+                    st.session_state.allocation_result = result
                 except Exception as e:
                     st.error(f"❌ Error: {str(e)}")
                     st.session_state.allocation_result = generate_mock_allocation(investment_amount, risk_capacity)
@@ -512,7 +512,7 @@ with tab1:
                 height=400
             )
 
-            st.plotly_chart(fig_pie, use_container_width=True)
+            st.plotly_chart(fig_pie, use_container_width=True, key="allocation_pie")
 
         with col2:
             # Bar chart
@@ -536,7 +536,7 @@ with tab1:
                 height=400
             )
 
-            st.plotly_chart(fig_bar, use_container_width=True)
+            st.plotly_chart(fig_bar, use_container_width=True, key="allocation_bar")
 
         # Table
         st.markdown("### 📋 DETAILED BREAKDOWN")
@@ -551,7 +551,7 @@ with tab1:
 
         st.dataframe(df_allocation, use_container_width=True, height=250)
 
-# TAB 2: Backtes# TAB 2: Backtest
+# TAB 2: Backtest
 with tab2:
     st.markdown("## 📈 HISTORICAL PERFORMANCE ANALYSIS")
 
@@ -632,34 +632,7 @@ with tab2:
             height=500
         )
 
-        st.plotly_chart(fig_perf, use_container_width=True)
-
-        # Performance chart
-        results_df = st.session_state.backtest_results['df']
-
-        fig_perf = go.Figure()
-        fig_perf.add_trace(go.Scatter(
-            x=results_df.index,
-            y=results_df['portfolio_value'],
-            mode='lines',
-            name='Portfolio Value',
-            line=dict(color='#00f7ff', width=3),
-            fill='tozeroy',
-            fillcolor='rgba(0, 247, 255, 0.1)'
-        ))
-
-        fig_perf.update_layout(
-            title={'text': 'PORTFOLIO PERFORMANCE', 'font': {'color': '#00f7ff', 'size': 24}},
-            paper_bgcolor='rgba(0,0,0,0)',
-            plot_bgcolor='rgba(0,0,0,0.2)',
-            font=dict(color='#00f7ff'),
-            xaxis=dict(gridcolor='rgba(0, 247, 255, 0.1)', title_text='Date', title_font=dict(color='#00f7ff')),
-            yaxis=dict(gridcolor='rgba(0, 247, 255, 0.1)', title_text='Value (₹)', title_font=dict(color='#00f7ff')),
-            hovermode='x unified',
-            height=500
-        )
-
-        st.plotly_chart(fig_perf, use_container_width=True)
+        st.plotly_chart(fig_perf, use_container_width=True, key="backtest_chart")
 
 # TAB 3: AI Insights
 with tab3:
@@ -688,7 +661,7 @@ with tab3:
             height=400
         )
 
-        st.plotly_chart(fig_regime, use_container_width=True)
+        st.plotly_chart(fig_regime, use_container_width=True, key="regime_chart")
 
     with col2:
         st.markdown("### 📊 RETURN FORECASTS")
@@ -720,7 +693,7 @@ with tab3:
             height=400
         )
 
-        st.plotly_chart(fig_forecast, use_container_width=True)
+        st.plotly_chart(fig_forecast, use_container_width=True, key="forecast_chart")
 
 # Footer
 st.markdown("<hr>", unsafe_allow_html=True)
@@ -730,10 +703,4 @@ st.markdown("""
     <p>🔒 Secure | 🚀 Fast | 🧠 Intelligent</p>
     <p style='font-size: 0.8rem;'>© 2026 AI Asset Allocator</p>
 </div>
-
 """, unsafe_allow_html=True)
-
-
-
-
-
