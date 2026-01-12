@@ -432,20 +432,21 @@ with tab1:
                 progress.progress((i + 1) / len(steps))
 
           # Generate allocation
-if st.session_state.models_loaded and st.session_state.ml_system:
-    try:
-        # Ensure processed_data exists
-        if not hasattr(st.session_state.ml_system, 'processed_data') or st.session_state.ml_system.processed_data is None:
-            status.text("📊 Loading market data...")
-            st.session_state.ml_system.processed_data = st.session_state.ml_system.data_engine.prepare_all_assets('2018-01-01')
-        
-        result = st.session_state.ml_system.generate_allocation(
+# Generate allocation
+            if st.session_state.models_loaded and st.session_state.ml_system:
+                try:
+                    # Ensure processed_data exists
+                    if not hasattr(st.session_state.ml_system, 'processed_data') or st.session_state.ml_system.processed_data is None:
+                        status.text("📊 Loading market data...")
+                        st.session_state.ml_system.processed_data = st.session_state.ml_system.data_engine.prepare_all_assets('2018-01-01')
+                    
+                    result = st.session_state.ml_system.generate_allocation(
                         investment_amount=investment_amount,
                         risk_capacity=risk_capacity,
                         time_horizon=time_horizon,
                         knowledge_level=knowledge_level
                     )
-                    st.session_state.ml_system.generate_allocation = result
+                    st.session_state.allocation_result = result  # FIXED: Was incorrectly assigning to generate_allocation
                 except Exception as e:
                     st.error(f"❌ Error: {str(e)}")
                     st.session_state.allocation_result = generate_mock_allocation(investment_amount, risk_capacity)
@@ -705,5 +706,6 @@ st.markdown("""
 </div>
 
 """, unsafe_allow_html=True)
+
 
 
