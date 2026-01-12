@@ -431,10 +431,15 @@ with tab1:
                 time.sleep(0.3)
                 progress.progress((i + 1) / len(steps))
 
-            # Generate allocation
-            if st.session_state.models_loaded and st.session_state.ml_system:
-                try:
-                    result = st.session_state.ml_system.generate_allocation(
+          # Generate allocation
+if st.session_state.models_loaded and st.session_state.ml_system:
+    try:
+        # Ensure processed_data exists
+        if not hasattr(st.session_state.ml_system, 'processed_data') or st.session_state.ml_system.processed_data is None:
+            status.text("📊 Loading market data...")
+            st.session_state.ml_system.processed_data = st.session_state.ml_system.data_engine.prepare_all_assets('2018-01-01')
+        
+        result = st.session_state.ml_system.generate_allocation(
                         investment_amount=investment_amount,
                         risk_capacity=risk_capacity,
                         time_horizon=time_horizon,
@@ -549,17 +554,22 @@ with tab1:
 with tab2:
     st.markdown("## 📈 HISTORICAL PERFORMANCE ANALYSIS")
 
-    if st.button("🔄 RUN BACKTEST", key="backtest_btn"):
-        if st.session_state.models_loaded and st.session_state.ml_system:
-            with st.spinner("⏳ Running simulation..."):
-                try:
-                    risk_map = {1: 'low', 2: 'low', 3: 'low', 4: 'medium', 5: 'medium',
-                                6: 'medium', 7: 'medium', 8: 'high', 9: 'high', 10: 'high'}
-
-                    results_df, allocations, metrics = st.session_state.ml_system.run_backtest(
-                        risk_tolerance=risk_map.get(risk_capacity, 'medium'),
-                        rebalance_days=30
-                    )
+  if st.button("🔄 RUN BACKTEST", key="backtest_btn"):
+    if st.session_state.models_loaded and st.session_state.ml_system:
+        with st.spinner("⏳ Running simulation..."):
+            try:
+                # Check if processed_data exists
+                if not hasattr(st.session_state.ml_system, 'processed_data') or st.session_state.ml_system.processed_data is None:
+                    st.warning("⚠️ Loading market data for backtest...")
+                    st.session_state.ml_system.processed_data = st.session_state.ml_system.data_engine.prepare_all_assets('2018-01-01')
+                
+                risk_map = {1: 'low', 2: 'low', 3: 'low', 4: 'medium', 5: 'medium', 
+                           6: 'medium', 7: 'medium', 8: 'high', 9: 'high', 10: 'high'}
+                
+                results_df, allocations, metrics = st.session_state.ml_system.run_backtest(
+                    risk_tolerance=risk_map.get(risk_capacity, 'medium'),
+                    rebalance_days=30
+                )
 
                     if results_df is not None:
                         st.session_state.backtest_results = {
@@ -693,4 +703,5 @@ st.markdown("""
     <p>🔒 Secure | 🚀 Fast | 🧠 Intelligent</p>
     <p style='font-size: 0.8rem;'>© 2026 AI Asset Allocator</p>
 </div>
+
 """, unsafe_allow_html=True)
