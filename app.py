@@ -445,7 +445,7 @@ if st.session_state.models_loaded and st.session_state.ml_system:
                         time_horizon=time_horizon,
                         knowledge_level=knowledge_level
                     )
-                    st.st.session_state.ml_system.generate_allocation = result
+                    st.session_state.ml_system.generate_allocation = result
                 except Exception as e:
                     st.error(f"❌ Error: {str(e)}")
                     st.session_state.allocation_result = generate_mock_allocation(investment_amount, risk_capacity)
@@ -705,4 +705,5 @@ st.markdown("""
 </div>
 
 """, unsafe_allow_html=True)
+
 
